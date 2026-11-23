@@ -24,7 +24,7 @@
 <form id="editor-form">
 <input type="hidden" id="editing-id">
 <div id="blog-fields" class="hidden"><label for="title">文章標題</label><input id="title" maxlength="180" placeholder="文章標題"><label for="summary">摘要</label><input id="summary" maxlength="360" placeholder="一兩句話介紹文章"></div>
-<div id="photo-fields" class="hidden"><label for="images">照片（最多 6 張）</label><input id="images" type="file" multiple accept="image/*"><p class="muted">會轉成壓縮 WebP，長邊最多 1800px，刪除 EXIF 等原始相片資訊後存進 GitHub。編輯既有照片時不選新圖就會保留舊照片。</p><div id="photo-preview"></div></div>
+<div id="photo-fields" class="hidden"><label for="images">照片（每篇一張）</label><input id="images" type="file" accept="image/*"><p class="muted">每篇僅顯示一張照片。會轉成壓縮 WebP，長邊最多 1800px，刪除 EXIF 等原始相片資訊後存進 GitHub。編輯既有照片時不選新圖就會保留舊照片。</p><div id="photo-preview"></div></div>
 <label for="body" id="body-label">隨手記下…</label><textarea id="body" rows="8" required placeholder="今天發現……"></textarea>
 <label for="tags">Tags（用逗號分隔，可留空）</label><input id="tags" placeholder="AI, Birds, Godot">
 <div class="actions"><button id="publish" type="submit">發布 Note</button><button id="clear-form" type="button" class="quiet">清空</button></div>

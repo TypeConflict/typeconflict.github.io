@@ -22,8 +22,8 @@ The publishing dashboard is available at `/admin.html` after this pull request i
 ## Behavior and limitations
 
 - A new photo is resized in your browser (up to 1800px) and re-encoded as WebP, removing embedded EXIF metadata. This reduces file size but does **not** guarantee every privacy-sensitive detail in the image is removed (e.g. visible location clues).
-- Up to 6 photos can be uploaded in a post. Latest snapshot updates automatically because the homepage sorts published photo dates.
-- Editing a photo post without selecting new files preserves its images; selecting new files replaces image references. Old uploaded files are **not** deleted automatically.
+- Only one new photo can be uploaded per post. Older multi-photo posts are still visible in the Photos gallery. Latest snapshot updates automatically because the homepage sorts published photo dates.
+- Editing a photo post without selecting a new file preserves its images; selecting one new file replaces image references. Old uploaded files are **not** deleted automatically.
 - Deleting a post removes it from `content.json` but does not erase uploaded photos or Git history.
 - Uploads are separate GitHub commits. If the final `content.json` update fails, some orphan image files may remain. Retry publication or clean up manually.
 - The `main` branch must allow direct writes. A future OAuth/server-side flow or a GitHub App could replace the personal token approach.
