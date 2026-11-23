@@ -1,0 +1,88 @@
+{
+  "blog": [
+    {
+      "id": "designing-conversational-simulations",
+      "title": "Designing conversational simulations with language models",
+      "date": "2026-11-20T10:00:00",
+      "tags": [
+        "AI",
+        "Research"
+      ],
+      "summary": "A place to think about interaction design, agent behaviors, and what a successful dialogue really means.",
+      "body": "## A work in progress\n\nThis is **sample content** for the blog layout. Replace it with your own research and writing.\n\nThe interesting questions are often not only *whether* an agent completes a task, but *how* the interaction unfolds.\n\n## Notes for future writing\n\n- The environment and the agent\n- What counts as a successful exchange\n- What qualitative analysis adds",
+      "demo": true
+    },
+    {
+      "id": "godot-python-notes",
+      "title": "Things I learned connecting Godot and Python",
+      "date": "2026-11-10T11:00:00",
+      "tags": [
+        "Godot",
+        "Development"
+      ],
+      "summary": "Small implementation details worth remembering when two systems talk to each other.",
+      "body": "## The idea\n\nA placeholder article about sending messages between a Godot client and a Python process.\n\n## Lessons\n\nKeep a clear message format, document your ports, and log the messages on both sides.",
+      "demo": true
+    }
+  ],
+  "notes": [
+    {
+      "id": "sample-note-1",
+      "date": "2026-11-23T08:00:00",
+      "text": "Sometimes the hardest part of an experiment is deciding what “success” should mean.",
+      "tags": [
+        "AI",
+        "Thoughts"
+      ],
+      "demo": true
+    },
+    {
+      "id": "sample-note-2",
+      "date": "2026-11-21T15:00:00",
+      "text": "A little reminder to document small bugs as soon as I solve them.",
+      "tags": [
+        "Development"
+      ],
+      "demo": true
+    }
+  ],
+  "photos": [
+    {
+      "id": "sample-photo",
+      "date": "2026-11-22T12:00:00",
+      "caption": "A quiet moment at the wetlands. (Sample illustration — replace with your own photograph.)",
+      "images": [
+        "assets/demo-bird.svg"
+      ],
+      "tags": [
+        "Birds",
+        "Nature"
+      ],
+      "demo": true
+    }
+  ],
+  "projects": [
+    {
+      "id": "conversational-simulation",
+      "title": "Conversational Simulation",
+      "summary": "Exploring language-model agents in an interactive simulated environment.",
+      "tags": [
+        "LLM",
+        "Godot"
+      ],
+      "body": "A space for architecture diagrams, demo videos, results, and related blog posts.",
+      "demo": true
+    },
+    {
+      "id": "element-lab",
+      "title": "Element Lab",
+      "summary": "A playful semantic combination experiment with language models.",
+      "tags": [
+        "Language",
+        "Game Dev"
+      ],
+      "body": "A place to document prototypes, what worked, and future experiments.",
+      "demo": true
+    }
+  ]
+}

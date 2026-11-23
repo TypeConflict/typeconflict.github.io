@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f9f8f4" />
+  <meta name="description" content="A personal corner for language, AI, small discoveries, and photography." />
+  <title>Corner</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header">
+      <a class="site-identity" href="#home" aria-label="Home">
+        <span class="site-title">Corner<span class="site-title-accent">.</span></span>
+        <span class="site-subtitle">language, technology & little observations</span>
+      </a>
+      <nav id="site-nav" aria-label="Main navigation">
+        <a href="#home" data-nav="home">Home</a>
+        <a href="#blog" data-nav="blog">Blog</a>
+        <a href="#notes" data-nav="notes">Notes</a>
+        <a href="#projects" data-nav="projects">Projects</a>
+        <a href="#photos" data-nav="photos">Photos</a>
+        <a href="#about" data-nav="about">About</a>
+      </nav>
+    </header>
+    <main id="app" tabindex="-1"></main>
+    <footer class="site-footer">
+      <span>Made with curiosity and too many browser tabs.</span>
+      <span><a href="#studio">Local Editor</a> · <span id="footer-year"></span></span>
+    </footer>
+  </div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
