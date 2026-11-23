@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Publish Studio · Corner</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<header class="top"><div><a href="./">← Corner</a><h1>Publish Studio</h1><p>Blog · Notes · Photos</p></div><span class="pill">GitHub Pages</span></header>
+<main>
+<section class="panel" id="auth-panel">
+<h2>連接 GitHub</h2>
+<p>使用 GitHub <strong>Fine-grained personal access token</strong> 直接提交到 <code>TypeConflict/typeconflict.github.io</code>。只需授權此儲存庫的 <strong>Contents: Read and write</strong>；不需要其他權限。</p>
+<p class="muted">Token 不會寫進網站程式、localStorage 或 cookie，只保存在本頁記憶體中。關閉或重新整理後須再次輸入。請在自己的裝置操作，避免瀏覽器擴充套件讀取敏感資料。</p>
+<label for="token">GitHub Token</label><input type="password" id="token" placeholder="github_pat_…" autocomplete="off" spellcheck="false">
+<div class="actions"><button id="connect">連接並讀取最新內容</button><a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener noreferrer">建立 Fine-grained Token ↗</a></div>
+<div id="auth-status" role="status" aria-live="polite"></div>
+</section>
+<section class="panel hidden" id="editor-panel">
+<div class="row"><div><h2>撰寫內容</h2><p class="muted" id="connection-name"></p></div><button type="button" class="quiet" id="disconnect">中斷連接</button></div>
+<div class="tabs" role="group" aria-label="發文類型"><button type="button" data-kind="note" class="active">Note</button><button type="button" data-kind="blog">Blog</button><button type="button" data-kind="photo">Photo</button></div>
+<form id="editor-form">
+<input type="hidden" id="editing-id">
+<div id="blog-fields" class="hidden"><label for="title">文章標題</label><input id="title" maxlength="180" placeholder="文章標題"><label for="summary">摘要</label><input id="summary" maxlength="360" placeholder="一兩句話介紹文章"></div>
+<div id="photo-fields" class="hidden"><label for="images">照片（最多 6 張）</label><input id="images" type="file" multiple accept="image/*"><p class="muted">會轉成壓縮 WebP，長邊最多 1800px，刪除 EXIF 等原始相片資訊後存進 GitHub。編輯既有照片時不選新圖就會保留舊照片。</p><div id="photo-preview"></div></div>
+<label for="body" id="body-label">隨手記下…</label><textarea id="body" rows="8" required placeholder="今天發現……"></textarea>
+<label for="tags">Tags（用逗號分隔，可留空）</label><input id="tags" placeholder="AI, Birds, Godot">
+<div class="actions"><button id="publish" type="submit">發布 Note</button><button id="clear-form" type="button" class="quiet">清空</button></div>
+</form><div id="publish-status" role="status" aria-live="polite"></div>
+</section>
+<section class="panel hidden" id="entries-panel"><div class="row"><h2>已公開內容</h2><button type="button" id="refresh" class="quiet">重新整理</button></div><p class="muted">可編輯或刪除已發布內容。更新 GitHub Pages 會有短暫部署延遲。</p><div id="entry-list"></div></section>
+</main>
+<footer>這是公開可讀的管理頁面，但沒有 Token 就不能發文。<a href="./#studio">原本的本機草稿編輯器</a>仍可使用。</footer>
+<script type="module" src="admin.js"></script>
+</body></html>
