@@ -23,17 +23,6 @@
       "summary": "Small implementation details worth remembering when two systems talk to each other.",
       "body": "## The idea\n\nA placeholder article about sending messages between a Godot client and a Python process.\n\n## Lessons\n\nKeep a clear message format, document your ports, and log the messages on both sides.",
       "demo": true
-    },
-    {
-      "id": "mwtkikuq-buwke",
-      "date": "2026-11-23T17:57:03.122Z",
-      "tags": [
-        "Markdown",
-        "Test"
-      ],
-      "title": "測試後台用",
-      "summary": "由於想要大幅度簡化發布Blog的難度，所以自己做了一個後臺測試。",
-      "body": "## 一個標題\n\n一些內文。"
     }
   ],
   "notes": [
