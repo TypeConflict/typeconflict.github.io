@@ -41,12 +41,11 @@
 │   ├── schema.sql         D1 登入資料表
 │   └── wrangler.toml      公開設定範本
 ├── docs/publishing.md      發布流程與限制
-├── legacy/mkdocs/         舊 MkDocs 原文、設定與既有產物
 ├── PUBLISHING.md           舊文件入口，導向目前發布指南
 └── .nojekyll               GitHub Pages 靜態檔案標記
 ```
 
-現行網站不需要 MkDocs。歷史資料集中於 `legacy/mkdocs/`，沒有自動匯入 `content.json`；既有 `docs/`、`site/` 路徑已搬移。舊版產物僅供參考，不再用於部署。
+現行網站使用根目錄的 HTML、CSS、JavaScript 與 `content.json`。舊 MkDocs 原文、設定及建置產物已移除；`docs/` 僅保留現行網站的操作文件。
 
 ## 想調整什麼，改哪裡？
 
@@ -80,7 +79,7 @@ npm test
 
 ## 部署分成兩部分
 
-**公開網站**：預期 GitHub Pages 設為 `main` 分支、`/(root)`。內容或外觀變更合併至 `main` 後，檢查 GitHub 的部署結果。不要用舊版 `mkdocs gh-deploy` 覆蓋目前網站。
+**公開網站**：預期 GitHub Pages 設為 `main` 分支、`/(root)`。內容或外觀變更合併至 `main` 後，檢查 GitHub 的部署結果。目前使用純靜態檔案部署，不需要 MkDocs。
 
 **手機後台**：Cloudflare Worker 獨立部署。合併 repo 不會自動更新 Worker，目前未設定 GitHub 到 Cloudflare 的自動部署。設定、D1、Secrets 與保留網頁變數的部署方法，見 [後台維護文件](mobile-worker/README.md)。
 

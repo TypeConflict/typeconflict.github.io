@@ -1,8 +1,0 @@
-.md-header__button.md-logo {
-    margin-right: 0rem !important; /* 減少右邊距 */
-}
-
-.md-header__title {
-    margin-left: 0.3rem !important; /* 讓文字靠左邊的 Logo 近一點 */
-    margin-top: 0.3rem !important;
-}
