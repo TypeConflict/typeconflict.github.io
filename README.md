@@ -1,14 +1,15 @@
-# Irene’s Corner
+# 部落格草構
 
-記錄語言、科技、研究、小發現與攝影的個人網站。公開網站由 GitHub Pages 提供；日常發文使用獨立的 Cloudflare 手機後台。
+記錄研究歷程與生活軼事的個人網站。公開網站由 GitHub Pages 提供；日常發文使用獨立的 Cloudflare 手機後台。
 
 - **公開網站**：<https://typeconflict.github.io/>
-- **發文後台**：<https://corner-publish-studio.irene-qh-yan.workers.dev/>
 - **Repository**：<https://github.com/TypeConflict/typeconflict.github.io>
 
 ## 日常使用
 
-在後台選「使用 GitHub 登入」，以已授權的 `TypeConflict` 帳號操作。一般使用不需要貼 personal access token。
+透過製作一個後台發文系統來簡化記錄的過程，以便較為直觀地隨想隨記。
+
+<img width="999" height="683" alt="截圖 2026-11-24 下午5 54 46" src="https://github.com/user-attachments/assets/ac3be623-c983-4eb2-83c6-9f5b6a5795cb" />
 
 | 類型 | 用途 | 內容 |
 | --- | --- | --- |
@@ -17,8 +18,6 @@
 | Photo | 照片記錄 | 每篇一張照片、說明、Tags |
 
 發布後，後台會直接提交 `main` 上的 `content.json`；照片另存於 `assets/photos/`。GitHub Pages 完成部署後，讀者才會看到更新。首頁 Latest snapshot 會選日期最新的照片貼文，使用其第一張圖片。歷史多張照片貼文仍會在 Photos 顯示所有圖片。
-
-手機可將後台加入主畫面；Mac 可用 Safari 加入 Dock。每個裝置可能需要各登入一次；登入期限最長 30 天，GitHub 撤銷授權或憑證到期可能要求提早重新登入。
 
 **已發布內容跨裝置共用；手機後台的未發布草稿不會自動儲存或同步。** 發布與讀取內容需要網路。Projects 目前須直接修改 `content.json`，尚未提供專用後台表單。
 
@@ -78,8 +77,6 @@ python3 -m http.server 8080 --bind 127.0.0.1
 cd mobile-worker
 npm test
 ```
-
-目前有 15 項自動測試；GitHub 與 D1 使用模擬，不能取代實際登入、手機安裝、照片發布與 token refresh 驗收。2026-11-24 已確認 Safari 真實登入、載入既有內容；當日已有後台提交 Note 的紀錄。完整手機／圖片／長期 refresh 測試仍待驗收。
 
 ## 部署分成兩部分
 
