@@ -29,9 +29,9 @@ async function unseal(env,v){
 function origin(req){return new URL(req.url).origin}
 function sameOrigin(req){return req.headers.get('origin')===origin(req)&&req.headers.get('x-corner-action')==='1'}
 async function github(token,path,init={}){
- const response=await fetch(GH+path,{...init,headers:{Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28',Authorization:'Bearer '+token,...init.headers}});
+ const response=await fetch(GH+path,{...init,headers:{'User-Agent':'TypeConflict-Mobile-Studio',Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28',Authorization:'Bearer '+token,...init.headers}});
  let body=await response.json().catch(()=>({}));
- if(!response.ok)throw Object.assign(Error(body.message||'GitHub API error'),{status:response.status});
+ if(!response.ok)throw Object.assign(Error(body.message||`GitHub API error (HTTP ${response.status})`),{status:response.status});
  return body;
 }
 async function oauthToken(env,payload){
@@ -45,7 +45,7 @@ async function session(req,env){
  if(!sid)return null;
  const id=await sha256(sid);
  const row=await env.DB.prepare('SELECT * FROM sessions WHERE id = ?').bind(id).first();
- if(!row||row.expires_at<Date.now())return null;
+ if(!row||row.login!==env.ALLOWED_LOGIN||row.expires_at<=Date.now())return null;
  let access=await unseal(env,row.access_cipher);
  if(row.token_expires_at<Date.now()+120000){
    if(!row.refresh_cipher)throw Object.assign(Error('Please sign in again'),{status:401});
@@ -62,19 +62,25 @@ export default {
   try{
    if(path==='/auth/start'){
      if(req.method!=='GET')return json({error:'Method not allowed'},405);
-     const state=random(),url=new URL('https://github.com/login/oauth/authorize');
+     const state=random(),verifier=random(),url=new URL('https://github.com/login/oauth/authorize');
      url.searchParams.set('client_id',env.GH_CLIENT_ID);
      url.searchParams.set('redirect_uri',origin(req)+'/auth/callback');
      url.searchParams.set('state',state);
+     url.searchParams.set('code_challenge_method','S256');
+     url.searchParams.set('code_challenge',encode(new Uint8Array(await crypto.subtle.digest('SHA-256',encoder.encode(verifier)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''));
      // GitHub App must have expiring user tokens enabled
-     return new Response(null,{status:302,headers:{Location:url.toString(),'Set-Cookie':setCookie('corner_oauth_state',state,600),'cache-control':'no-store'}});
+     const headers=new Headers({Location:url.toString(),'cache-control':'no-store'});
+     headers.append('Set-Cookie',setCookie('corner_oauth_state',state,600));
+     headers.append('Set-Cookie',setCookie('corner_oauth_verifier',verifier,600));
+     return new Response(null,{status:302,headers});
    }
    if(path==='/auth/callback'){
-     const state=cookies(req).corner_oauth_state;
-     if(!state||!u.searchParams.get('state')||state!==u.searchParams.get('state'))return json({error:'OAuth state mismatch'},403);
+     if(req.method!=='GET')return json({error:'Method not allowed'},405);
+     const {corner_oauth_state:state,corner_oauth_verifier:verifier}=cookies(req);
+     if(!verifier||!state||!u.searchParams.get('state')||state!==u.searchParams.get('state'))return json({error:'OAuth state mismatch'},403);
      const code=u.searchParams.get('code');
      if(!code)return json({error:'No authorization code'},400);
-     const grant=await oauthToken(env,{code,redirect_uri:origin(req)+'/auth/callback'});
+     const grant=await oauthToken(env,{code,code_verifier:verifier,redirect_uri:origin(req)+'/auth/callback'});
      if(!grant.refresh_token||!grant.expires_in)throw Error('Enable expiring user tokens on the GitHub App');
      const me=await github(grant.access_token,'/user');
      if(me.login!==env.ALLOWED_LOGIN) return json({error:'Not an authorized editor'},403,{'Set-Cookie':clearCookie('corner_oauth_state')});
@@ -86,9 +92,17 @@ export default {
      const headers=new Headers({'Location':'/','cache-control':'no-store'});
      headers.append('Set-Cookie',setCookie('corner_session',sid,30*24*3600));
      headers.append('Set-Cookie',clearCookie('corner_oauth_state'));
+     headers.append('Set-Cookie',clearCookie('corner_oauth_verifier'));
      return new Response(null,{status:302,headers});
    }
    if(path.startsWith('/api/')){
+     if(req.method!=='GET'&&(req.method!=='POST'||!sameOrigin(req)))return json({error:'Cross-site request blocked'},403);
+     // Logout must work even when the GitHub token has expired or been revoked.
+     if(path==='/api/logout'&&req.method==='POST'){
+       const sid=cookies(req).corner_session;
+       if(sid)await env.DB.prepare('DELETE FROM sessions WHERE id=?').bind(await sha256(sid)).run();
+       return json({ok:true},200,{'Set-Cookie':clearCookie('corner_session')});
+     }
      const s=await session(req,env);
      if(!s)return json({error:'Sign in with GitHub first'},401);
      if(path==='/api/me'&&req.method==='GET')return json({login:s.user,repo:REPO});
@@ -98,10 +112,6 @@ export default {
        return json({content,sha:f.sha});
      }
      if(req.method!=='POST'||!sameOrigin(req))return json({error:'Cross-site request blocked'},403);
-     if(path==='/api/logout'){
-       await env.DB.prepare('DELETE FROM sessions WHERE id=?').bind(s.id).run();
-       return json({ok:true},200,{'Set-Cookie':clearCookie('corner_session')});
-     }
      if(path==='/api/upload'){
        if(req.headers.get('content-type')!=='image/webp')return json({error:'WebP required'},415);
        if(Number(req.headers.get('content-length')||0)>5e6)return json({error:'Max upload 5MB'},413);
@@ -117,15 +127,19 @@ export default {
        if(JSON.stringify(input).length>250000)return json({error:'Content too large'},413);
        if(!['blog','notes','photos'].includes(input.type)||!input.entry||typeof input.entry.id!=='string')return json({error:'Invalid content'},400);
        const f=await github(s.token,'/repos/'+REPO+'/contents/content.json?ref=main');
+       if(typeof input.sha!=='string'||input.sha!==f.sha)return json({error:'內容已在其他裝置更新，請重新整理後再編輯。'},409);
        const data=JSON.parse(decoder.decode(decode(f.content.replace(/\s/g,''))));
        const list=data[input.type];
        if(!Array.isArray(list))return json({error:'Invalid content.json'},500);
        const entry=input.entry,id=entry.id;
-       if(!/^[a-zA-Z0-9_-]{1,100}$/.test(id)||!Array.isArray(entry.tags)||entry.tags.length>15||typeof entry.date!=='string')return json({error:'Invalid entry fields'},400);
+       if(!/^[a-zA-Z0-9_-]{1,100}$/.test(id)||!Array.isArray(entry.tags)||entry.tags.length>15||entry.tags.some(t=>typeof t!=='string'||t.length>100)||typeof entry.date!=='string'||!Number.isFinite(Date.parse(entry.date)))return json({error:'Invalid entry fields'},400);
+       if(!['delete','upsert'].includes(input.action))return json({error:'Unknown action'},400);
+       if(input.action==='upsert'){
        if(input.type==='notes'&&typeof entry.text!=='string')return json({error:'Missing note'},400);
        if(input.type==='blog'&&(typeof entry.title!=='string'||typeof entry.body!=='string'||typeof entry.summary!=='string'))return json({error:'Missing blog fields'},400);
-       if(input.type==='photos'&&(typeof entry.caption!=='string'||!Array.isArray(entry.images)||entry.images.length!==1||!entry.images[0].startsWith('assets/photos/')))return json({error:'One uploaded photo is required'},400);
-       if(['delete','upsert'].includes(input.action)===false)return json({error:'Unknown action'},400);
+       if(input.type==='photos'&&(typeof entry.caption!=='string'||!Array.isArray(entry.images)||entry.images.length!==1||typeof entry.images[0]!=='string'||!/^assets\/photos\/[a-zA-Z0-9_-]+\.webp$/.test(entry.images[0])))return json({error:'One uploaded photo is required'},400);
+
+       }
        const position=list.findIndex(x=>x.id===id);
        if(input.action==='delete'){
          if(position<0)return json({error:'Entry no longer exists'},404);
